@@ -1,0 +1,79 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ProfileSnapshot {
+  id              String   @id @default(cuid())
+  username        String
+  uuid            String
+  profileId       String
+  profileName     String
+  selected        Boolean  @default(false)
+  gameMode        String   @default("normal")
+  source          String
+  sourceDetails   String?
+  rawData         String
+  parsedData      String
+  networth        Float    @default(0)
+  purse           Float    @default(0)
+  bank            Float    @default(0)
+  skillAverage    Float    @default(0)
+  skyblockLevel   Float    @default(0)
+  magicalPower    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  historicalSnapshots HistoricalSnapshot[]
+
+  @@unique([username, profileName])
+  @@index([uuid])
+}
+
+model HistoricalSnapshot {
+  id                String          @id @default(cuid())
+  profileSnapshotId String
+  profileSnapshot   ProfileSnapshot @relation(fields: [profileSnapshotId], references: [id], onDelete: Cascade)
+  networth          Float
+  skillAverage      Float
+  skyblockLevel     Float
+  purse             Float
+  bank              Float
+  timestamp         DateTime        @default(now())
+
+  @@index([profileSnapshotId])
+}
+
+model UpgradePlan {
+  id              String   @id @default(cuid())
+  username        String
+  profileName     String
+  budget          Float    @default(0)
+  gameMode        String   @default("combat")
+  selectedItemIds String   @default("[]")
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([username, profileName])
+}
+
+model AppConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model ItemPriceCache {
+  itemId    String   @id
+  name      String
+  category  String   @default("misc")
+  buyPrice  Float    @default(0)
+  sellPrice Float    @default(0)
+  source    String
+  updatedAt DateTime @updatedAt
+}
