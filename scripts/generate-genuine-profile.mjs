@@ -89,6 +89,46 @@ async function decodeNbt(base64Data) {
   return items;
 }
 
+const PET_XP_TABLE = [
+  100, 110, 120, 130, 145, 160, 175, 190, 210, 230, 250, 275, 300, 330, 360, 400, 440, 490, 540, 600,
+  660, 730, 800, 880, 960, 1050, 1150, 1260, 1380, 1510, 1650, 1800, 1960, 2130, 2310, 2500, 2700,
+  2920, 3160, 3420, 3700, 4000, 4350, 4750, 5200, 5700, 6300, 7000, 7800, 8700, 9700, 10800, 12000,
+  13300, 14700, 16200, 17800, 19500, 21300, 23200, 25200, 27400, 29800, 32400, 35200, 38200, 41400,
+  44800, 48400, 52200, 56200, 60400, 64800, 69400, 74200, 79200, 84400, 89800, 95500, 101400, 107500,
+  113900, 120500, 127300, 134400, 141700, 149300, 157200, 165400, 173900, 182700, 191800, 201200,
+  210900, 220900, 231200, 241800, 252700, 263900
+];
+
+const PET_RARITY_OFFSETS = {
+  COMMON: 0,
+  UNCOMMON: 6,
+  RARE: 11,
+  EPIC: 16,
+  LEGENDARY: 20,
+  MYTHIC: 20
+};
+
+function calculatePetLevel(tier, totalXp) {
+  const offset = PET_RARITY_OFFSETS[tier?.toUpperCase()] || 0;
+  let level = 1;
+  let accumulated = 0;
+  let xpForNext = PET_XP_TABLE[offset];
+
+  for (let i = 0; i < 99; i++) {
+    const cost = PET_XP_TABLE[offset + i] || 10000000;
+    if (totalXp >= accumulated + cost) {
+      accumulated += cost;
+      level++;
+    } else {
+      xpForNext = cost;
+      break;
+    }
+  }
+
+  const currentLevelXp = Math.max(0, totalXp - accumulated);
+  return { level, currentLevelXp, xpForNext };
+}
+
 const SKILL_XP_TABLE = [
   0,
   50, 125, 200, 300, 500, 750, 1000, 1500, 2000, 3500, 5000, 7500, 10000, 15000, 20000,
@@ -171,17 +211,21 @@ async function generate() {
   const purse = member.currencies?.coin_purse ?? 30;
   const bank = profile.banking?.balance ?? 0;
 
-  // Real pets: member has no pets!
-  const petList = (member.pets || []).map(p => ({
-    uuid: p.uuid,
-    type: p.type,
-    name: p.type?.replace(/_/g, ' ') || 'Pet',
-    rarity: p.tier || 'COMMON',
-    level: p.level || 1,
-    exp: p.exp || 0,
-    active: Boolean(p.active),
-    candyUsed: p.candyUsed || 0,
-  }));
+  // Real pets directly from Hypixel API v2 pets_data
+  const rawPets = member.pets_data?.pets || member.pets || [];
+  const petList = rawPets.map(p => {
+    const { level } = calculatePetLevel(p.tier || 'COMMON', p.exp || 0);
+    return {
+      uuid: p.uuid,
+      type: p.type,
+      name: p.type?.replace(/_/g, ' ') || 'Pet',
+      rarity: p.tier || 'COMMON',
+      level,
+      exp: p.exp || 0,
+      active: Boolean(p.active),
+      candyUsed: p.candyUsed || 0,
+    };
+  });
   const activePet = petList.find(p => p.active) || null;
 
   // Real skills

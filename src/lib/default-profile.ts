@@ -2160,9 +2160,49 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
     "missingCount": 92
   },
   "pets": {
-    "list": [],
-    "activePet": null,
-    "petScore": 0
+    "list": [
+      {
+        "uuid": "887df53b-1acf-4ee4-8f71-4b91e2858a47",
+        "type": "GRANDMA_WOLF",
+        "name": "GRANDMA WOLF",
+        "rarity": "UNCOMMON",
+        "level": 50,
+        "exp": 164661.73131669758,
+        "active": true,
+        "candyUsed": 0
+      },
+      {
+        "uuid": "eedba2f7-5692-4c4d-b79d-6ffe2abe5638",
+        "type": "REINDEER",
+        "name": "REINDEER",
+        "rarity": "LEGENDARY",
+        "level": 27,
+        "exp": 64034.243828377286,
+        "active": false,
+        "candyUsed": 0
+      },
+      {
+        "uuid": "423f7355-982f-49e7-a0ca-e843355ea24a",
+        "type": "GRANDMA_WOLF",
+        "name": "GRANDMA WOLF",
+        "rarity": "UNCOMMON",
+        "level": 1,
+        "exp": 0,
+        "active": false,
+        "candyUsed": 0
+      }
+    ],
+    "activePet": {
+      "uuid": "887df53b-1acf-4ee4-8f71-4b91e2858a47",
+      "type": "GRANDMA_WOLF",
+      "name": "GRANDMA WOLF",
+      "rarity": "UNCOMMON",
+      "level": 50,
+      "exp": 164661.73131669758,
+      "active": true,
+      "candyUsed": 0
+    },
+    "petScore": 3
   },
   "dungeons": {
     "catacombsLevel": 0,
@@ -2326,7 +2366,7 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
   },
   "transparency": {
     "dataSource": "HYPIXEL_API_LIVE",
-    "lastUpdated": "2026-11-07T22:31:43.686Z",
+    "lastUpdated": "2026-11-07T22:38:05.711Z",
     "cached": true,
     "provenance": "Hypixel Public API v2 (Official)"
   }
