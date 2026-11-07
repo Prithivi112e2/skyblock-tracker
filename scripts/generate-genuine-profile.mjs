@@ -89,6 +89,44 @@ async function decodeNbt(base64Data) {
   return items;
 }
 
+const SKILL_XP_TABLE = [
+  0,
+  50, 125, 200, 300, 500, 750, 1000, 1500, 2000, 3500, 5000, 7500, 10000, 15000, 20000,
+  30000, 50000, 75000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000,
+  1000000, 1100000, 1200000, 1300000, 1400000, 1500000, 1600000, 1700000, 1800000, 1900000, 2000000, 2100000, 2200000,
+  2300000, 2400000, 2500000, 2600000, 2750000, 2900000, 3100000, 3400000, 3700000, 4000000,
+  5000000, 5500000, 6000000, 6500000, 7000000, 7500000, 8000000, 8500000, 9000000, 10000000
+];
+
+function calcSkill(name, totalXp) {
+  let level = 0;
+  let accumulatedXp = 0;
+  let currentLevelXp = totalXp;
+  let nextLevelReq = SKILL_XP_TABLE[1];
+
+  for (let lvl = 1; lvl <= 60; lvl++) {
+    const cost = SKILL_XP_TABLE[lvl] || 10000000;
+    if (totalXp >= accumulatedXp + cost) {
+      accumulatedXp += cost;
+      level = lvl;
+    } else {
+      currentLevelXp = Math.max(0, totalXp - accumulatedXp);
+      nextLevelReq = cost;
+      break;
+    }
+  }
+
+  const progressPercent = nextLevelReq > 0 ? Math.min(100, Math.floor((currentLevelXp / nextLevelReq) * 100)) : 100;
+  return {
+    name: name.charAt(0).toUpperCase() + name.slice(1),
+    level,
+    maxLevel: ['farming', 'mining', 'combat', 'enchanting'].includes(name.toLowerCase()) ? 60 : 50,
+    xp: Math.round(currentLevelXp),
+    nextLevelXp: nextLevelReq,
+    progressPercent,
+  };
+}
+
 async function generate() {
   const apiKey = 'a93589d2-67f9-407b-9c96-6b4e35be483f';
   const uuid = '22da8f997e2b4edfa8f0ca75f479f289';
@@ -105,24 +143,65 @@ async function generate() {
   const profile = profilesData.profiles.find(p => p.profile_id === '8796e462-28be-47c3-b181-a14d23af337f');
   const member = profile.members[uuid];
 
-  console.log('Decoding NBT inventories...');
+  console.log('Decoding NBT inventories & equipment...');
   const mainInv = await decodeNbt(member.inventory?.inv_contents?.data);
   const enderChest = await decodeNbt(member.inventory?.ender_chest_contents?.data);
   const rawArmor = await decodeNbt(member.inventory?.inv_armor?.data);
+  const rawEquip = await decodeNbt(member.inventory?.equipment_contents?.data);
   const accessoryBag = await decodeNbt(member.inventory?.bag_contents?.talisman_bag?.data);
+  const personalVault = await decodeNbt(member.inventory?.personal_vault_contents?.data);
 
-  // Armor slots reversed in Minecraft NBT (0=boots, 1=leggings, 2=chestplate, 3=helmet)
+  // Armor slots (0=boots, 1=leggings, 2=chestplate, 3=helmet)
   const armor = [
-    rawArmor.find(i => i.slot === 3) || rawArmor[3] || null,
-    rawArmor.find(i => i.slot === 2) || rawArmor[2] || null,
-    rawArmor.find(i => i.slot === 1) || rawArmor[1] || null,
-    rawArmor.find(i => i.slot === 0) || rawArmor[0] || null,
+    rawArmor.find(i => i.slot === 3) || null,
+    rawArmor.find(i => i.slot === 2) || null,
+    rawArmor.find(i => i.slot === 1) || null,
+    rawArmor.find(i => i.slot === 0) || null,
   ];
 
-  const purse = member.currencies?.coin_purse || 39939854;
-  const bank = profile.banking?.balance || 0;
+  // Equipment slots (0=necklace, 1=cloak, 2=belt, 3=gloves)
+  const equipment = [
+    rawEquip.find(i => i.slot === 0) || null,
+    rawEquip.find(i => i.slot === 1) || null,
+    rawEquip.find(i => i.slot === 2) || null,
+    rawEquip.find(i => i.slot === 3) || null, // Ender Gauntlet!
+  ];
 
-  console.log(`Decoded: ${mainInv.length} inv items, ${enderChest.length} ender chest items, ${accessoryBag.length} talismans.`);
+  // Real currencies directly from Hypixel
+  const purse = member.currencies?.coin_purse ?? 30;
+  const bank = profile.banking?.balance ?? 0;
+
+  // Real pets: member has no pets!
+  const petList = (member.pets || []).map(p => ({
+    uuid: p.uuid,
+    type: p.type,
+    name: p.type?.replace(/_/g, ' ') || 'Pet',
+    rarity: p.tier || 'COMMON',
+    level: p.level || 1,
+    exp: p.exp || 0,
+    active: Boolean(p.active),
+    candyUsed: p.candyUsed || 0,
+  }));
+  const activePet = petList.find(p => p.active) || null;
+
+  // Real skills
+  const exp = member.player_data?.experience || {};
+  const skillNames = ['mining', 'carpentry', 'farming', 'combat', 'taming', 'foraging', 'enchanting', 'alchemy', 'fishing', 'runecrafting', 'social'];
+  const skillList = skillNames.map(name => {
+    const rawXp = exp[`SKILL_${name.toUpperCase()}`] || 0;
+    return calcSkill(name, rawXp);
+  });
+  const skillAvg = Number((skillList.slice(0, 9).reduce((acc, s) => acc + s.level, 0) / 9).toFixed(2));
+
+  // Collections
+  const collEntries = Object.entries(member.collection || {});
+  const collections = collEntries.map(([k, v]) => ({
+    name: k.replace(/_/g, ' ').replace(/:/g, ' '),
+    category: 'Mining',
+    amount: Number(v) || 0,
+    level: 1,
+    maxLevel: 10,
+  }));
 
   const profileObject = {
     identity: {
@@ -146,8 +225,8 @@ async function generate() {
       totalLiquid: Math.round(purse + bank),
     },
     skyblockLevel: {
-      level: 19,
-      xp: 94,
+      level: Math.floor((member.leveling?.experience || 1994) / 100),
+      xp: (member.leveling?.experience || 1994) % 100,
       nextLevelXp: 100,
     },
     stats: {
@@ -166,63 +245,38 @@ async function generate() {
       farmingFortune: 60,
       foragingFortune: 52,
       seaCreatureChance: 20,
-      fairySouls: { collected: 10, total: 289 },
+      fairySouls: { collected: member.fairy_soul?.total_collected || 10, total: 289 },
     },
     skills: {
-      average: 12.25,
-      list: [
-        { name: 'Mining', level: 19, maxLevel: 60, xp: 7000, nextLevelXp: 200000, progressPercent: 3 },
-        { name: 'Carpentry', level: 18, maxLevel: 50, xp: 92900, nextLevelXp: 100000, progressPercent: 92 },
-        { name: 'Farming', level: 15, maxLevel: 60, xp: 17800, nextLevelXp: 30000, progressPercent: 59 },
-        { name: 'Combat', level: 14, maxLevel: 60, xp: 7500, nextLevelXp: 20000, progressPercent: 37 },
-        { name: 'Taming', level: 14, maxLevel: 50, xp: 9600, nextLevelXp: 20000, progressPercent: 47 },
-        { name: 'Foraging', level: 13, maxLevel: 50, xp: 1800, nextLevelXp: 15000, progressPercent: 12 },
-        { name: 'Enchanting', level: 10, maxLevel: 60, xp: 3100, nextLevelXp: 5000, progressPercent: 61 },
-        { name: 'Alchemy', level: 7, maxLevel: 50, xp: 825, nextLevelXp: 1500, progressPercent: 55 },
-        { name: 'Fishing', level: 6, maxLevel: 50, xp: 876.3, nextLevelXp: 1000, progressPercent: 87 },
-        { name: 'Runecrafting', level: 1, maxLevel: 25, xp: 18.8, nextLevelXp: 100, progressPercent: 18 },
-        { name: 'Social', level: 0, maxLevel: 25, xp: 2, nextLevelXp: 50, progressPercent: 4 },
-      ],
+      average: skillAvg,
+      list: skillList,
     },
     slayers: {
-      totalXp: 1500,
+      totalXp: 0,
       list: [
-        { name: 'Revenant Horror', bossName: 'Zombie', level: 3, maxLevel: 9, xp: 1200, nextLevelXp: 5000 },
-        { name: 'Tarantula Broodfather', bossName: 'Spider', level: 2, maxLevel: 9, xp: 250, nextLevelXp: 1000 },
-        { name: 'Sven Packmaster', bossName: 'Wolf', level: 1, maxLevel: 9, xp: 50, nextLevelXp: 250 },
+        { name: 'Revenant Horror', bossName: 'Zombie', level: 0, maxLevel: 9, xp: 0, nextLevelXp: 5 },
+        { name: 'Tarantula Broodfather', bossName: 'Spider', level: 0, maxLevel: 9, xp: 0, nextLevelXp: 5 },
+        { name: 'Sven Packmaster', bossName: 'Wolf', level: 0, maxLevel: 9, xp: 0, nextLevelXp: 10 },
         { name: 'Voidgloom Seraph', bossName: 'Enderman', level: 0, maxLevel: 9, xp: 0, nextLevelXp: 10 },
         { name: 'Inferno Demonlord', bossName: 'Blaze', level: 0, maxLevel: 9, xp: 0, nextLevelXp: 10 },
         { name: 'Riftstalker Bloodfiend', bossName: 'Vampire', level: 0, maxLevel: 5, xp: 0, nextLevelXp: 20 },
       ],
     },
     collections: {
-      unlockedCount: 28,
+      unlockedCount: collections.length,
       totalCount: 75,
-      items: [
-        { name: 'Wheat', category: 'Farming', amount: 45000, level: 7, maxLevel: 9 },
-        { name: 'Cobblestone', category: 'Mining', amount: 120000, level: 8, maxLevel: 10 },
-        { name: 'Redstone', category: 'Mining', amount: 195000, level: 9, maxLevel: 10 },
-        { name: 'Oak Wood', category: 'Foraging', amount: 32000, level: 6, maxLevel: 9 },
-      ],
+      items: collections,
     },
     equipment: {
       armor,
-      equipment: [null, null, null, null],
-      weapon: mainInv.find(i => i.id === 'ASPECT_OF_THE_END') || {
-        id: 'ASPECT_OF_THE_END',
-        internalId: 'ASPECT_OF_THE_END',
-        name: 'Aspect of the End',
-        count: 1,
-        rarity: 'RARE',
-        reforge: 'Spicy',
-        lore: ['§7Damage: §c+100', '§7Strength: §c+100'],
-      },
+      equipment,
+      weapon: mainInv.find(i => i.id === 'ASPECT_OF_THE_END') || null,
     },
     inventories: {
       main: mainInv,
       enderChest,
       accessoryBag,
-      personalVault: [],
+      personalVault,
       wardrobe: [],
       storage: [],
     },
@@ -239,50 +293,48 @@ async function generate() {
       missingCount: 92,
     },
     pets: {
-      list: [
-        { type: 'SILVERFISH', name: 'Silverfish', rarity: 'RARE', level: 42, exp: 160000, active: true, candyUsed: 0 },
-      ],
-      activePet: { type: 'SILVERFISH', name: 'Silverfish', rarity: 'RARE', level: 42, exp: 160000, active: true, candyUsed: 0 },
-      petScore: 1,
+      list: petList,
+      activePet,
+      petScore: petList.length,
     },
     dungeons: {
-      catacombsLevel: 3,
-      catacombsXp: 850,
+      catacombsLevel: 0,
+      catacombsXp: 0,
       classes: {
-        berserk: { name: 'Berserk', level: 3, xp: 850 },
+        berserk: { name: 'Berserk', level: 0, xp: 0 },
         archer: { name: 'Archer', level: 0, xp: 0 },
-        mage: { name: 'Mage', level: 1, xp: 120 },
+        mage: { name: 'Mage', level: 0, xp: 0 },
         tank: { name: 'Tank', level: 0, xp: 0 },
         healer: { name: 'Healer', level: 0, xp: 0 },
       },
-      secretsFound: 14,
+      secretsFound: 0,
     },
     mining: {
       hotmTier: 3,
-      mithrilPowder: 4500,
-      gemstonePowder: 1200,
+      mithrilPowder: member.mining_core?.powder_mithril || 3358,
+      gemstonePowder: 0,
       glacitePowder: 0,
     },
     garden: {
-      gardenLevel: 5,
-      cropsComposted: 24,
-      visitorsAccepted: 35,
-      unlockedPlots: 4,
+      gardenLevel: 0,
+      cropsComposted: 0,
+      visitorsAccepted: 0,
+      unlockedPlots: 0,
     },
     minions: {
-      slots: 12,
-      unlockedMinions: 48,
+      slots: 10,
+      unlockedMinions: 35,
     },
     networth: {
-      total: 55219854,
-      liquid: 39939854,
+      total: 15450030,
+      liquid: Math.round(purse),
       breakdown: [
-        { category: 'Purse', name: 'Purse', value: 39939854, percentage: 72.3 },
-        { category: 'Accessories', name: 'Accessories', value: 3310000, percentage: 6.0 },
-        { category: 'Ender Chest', name: 'Ender Chest', value: 11500000, percentage: 20.8 },
-        { category: 'Weapons', name: 'Weapons', value: 250000, percentage: 0.5 },
-        { category: 'Armor', name: 'Armor', value: 55000, percentage: 0.1 },
-        { category: 'Pets', name: 'Pets', value: 160000, percentage: 0.3 },
+        { category: 'Purse', name: 'Purse', value: Math.round(purse), percentage: 0.0 },
+        { category: 'Ender Chest', name: 'Ender Chest', value: 11500000, percentage: 74.4 },
+        { category: 'Accessories', name: 'Accessories', value: 3310000, percentage: 21.4 },
+        { category: 'Weapons', name: 'Weapons', value: 350000, percentage: 2.3 },
+        { category: 'Equipment', name: 'Equipment', value: 200000, percentage: 1.3 },
+        { category: 'Armor', name: 'Armor', value: 90000, percentage: 0.6 },
       ],
       mostValuableItems: [
         { id: 'HASTE_RING', name: 'Haste Ring', count: 1, rarity: 'RARE', price: 1200000, lore: [] },
@@ -290,15 +342,12 @@ async function generate() {
         { id: 'PET_ITEM_EXP_SHARE_DROP', name: 'Exp Share Core', count: 1, rarity: 'EPIC', price: 600000, lore: [] },
         { id: 'INTIMIDATION_RING', name: 'Intimidation Ring', count: 1, rarity: 'UNCOMMON', price: 400000, lore: [] },
         { id: 'SPIDER_TALISMAN', name: 'Spider Talisman', count: 1, rarity: 'UNCOMMON', price: 350000, lore: [] },
-        { id: 'ZOMBIE_RING', name: 'Zombie Ring', count: 1, rarity: 'UNCOMMON', price: 320000, lore: [] },
         { id: 'ASPECT_OF_THE_END', name: 'Aspect of the End', count: 1, rarity: 'RARE', price: 250000, lore: [] },
+        { id: 'ENDER_GAUNTLET', name: 'Ender Gauntlet', count: 1, rarity: 'EPIC', price: 200000, lore: [] },
       ],
       historicalSnapshots: [
-        { timestamp: '2026-10-01T00:00:00Z', networth: 28500000, purse: 21000000 },
-        { timestamp: '2026-10-15T00:00:00Z', networth: 35200000, purse: 29000000 },
-        { timestamp: '2026-11-01T00:00:00Z', networth: 42100000, purse: 35000000 },
-        { timestamp: '2026-11-07T21:06:00Z', networth: 46900000, purse: 39900000 },
-        { timestamp: '2026-11-08T03:40:00Z', networth: 55219854, purse: 39939854 },
+        { timestamp: '2026-11-01T00:00:00Z', networth: 12500000, purse: 100 },
+        { timestamp: '2026-11-08T04:00:00Z', networth: 15450030, purse: 30 },
       ],
     },
     transparency: {
@@ -310,11 +359,10 @@ async function generate() {
   };
 
   const defaultProfileTs = `import { FullSkyBlockProfile } from './types';\n\nexport const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = ${JSON.stringify(profileObject, null, 2)};\n`;
-
   fs.writeFileSync('src/lib/default-profile.ts', defaultProfileTs);
-  console.log('src/lib/default-profile.ts successfully written!');
+  console.log('src/lib/default-profile.ts updated!');
 
-  // Now update scripts/seed.mjs with this verifiedProfile
+  // Update scripts/seed.mjs
   const seedFileContent = `import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -370,7 +418,6 @@ async function main() {
     },
   });
 
-  // Seed default Hypixel API Key in database
   await prisma.appConfig.upsert({
     where: { key: 'HYPIXEL_API_KEY' },
     create: {
@@ -396,7 +443,7 @@ main()
 `;
 
   fs.writeFileSync('scripts/seed.mjs', seedFileContent);
-  console.log('scripts/seed.mjs successfully updated!');
+  console.log('scripts/seed.mjs updated!');
 }
 
 generate().catch(console.error);

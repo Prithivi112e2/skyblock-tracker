@@ -19,9 +19,9 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
     ]
   },
   "currencies": {
-    "purse": 39939854,
+    "purse": 21121,
     "bank": 0,
-    "totalLiquid": 39939854
+    "totalLiquid": 21121
   },
   "skyblockLevel": {
     "level": 19,
@@ -50,13 +50,13 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
     }
   },
   "skills": {
-    "average": 12.25,
+    "average": 12.89,
     "list": [
       {
         "name": "Mining",
         "level": 19,
         "maxLevel": 60,
-        "xp": 7000,
+        "xp": 7616,
         "nextLevelXp": 200000,
         "progressPercent": 3
       },
@@ -64,7 +64,7 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "name": "Carpentry",
         "level": 18,
         "maxLevel": 50,
-        "xp": 92900,
+        "xp": 92944,
         "nextLevelXp": 100000,
         "progressPercent": 92
       },
@@ -72,7 +72,7 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "name": "Farming",
         "level": 15,
         "maxLevel": 60,
-        "xp": 17800,
+        "xp": 17831,
         "nextLevelXp": 30000,
         "progressPercent": 59
       },
@@ -80,7 +80,7 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "name": "Combat",
         "level": 14,
         "maxLevel": 60,
-        "xp": 7500,
+        "xp": 7523,
         "nextLevelXp": 20000,
         "progressPercent": 37
       },
@@ -88,15 +88,15 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "name": "Taming",
         "level": 14,
         "maxLevel": 50,
-        "xp": 9600,
+        "xp": 9655,
         "nextLevelXp": 20000,
-        "progressPercent": 47
+        "progressPercent": 48
       },
       {
         "name": "Foraging",
         "level": 13,
         "maxLevel": 50,
-        "xp": 1800,
+        "xp": 1848,
         "nextLevelXp": 15000,
         "progressPercent": 12
       },
@@ -104,7 +104,7 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "name": "Enchanting",
         "level": 10,
         "maxLevel": 60,
-        "xp": 3100,
+        "xp": 3084,
         "nextLevelXp": 5000,
         "progressPercent": 61
       },
@@ -120,22 +120,22 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "name": "Fishing",
         "level": 6,
         "maxLevel": 50,
-        "xp": 876.3,
+        "xp": 876,
         "nextLevelXp": 1000,
         "progressPercent": 87
       },
       {
         "name": "Runecrafting",
         "level": 1,
-        "maxLevel": 25,
-        "xp": 18.8,
-        "nextLevelXp": 100,
-        "progressPercent": 18
+        "maxLevel": 50,
+        "xp": 19,
+        "nextLevelXp": 125,
+        "progressPercent": 15
       },
       {
         "name": "Social",
         "level": 0,
-        "maxLevel": 25,
+        "maxLevel": 50,
         "xp": 2,
         "nextLevelXp": 50,
         "progressPercent": 4
@@ -143,31 +143,31 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
     ]
   },
   "slayers": {
-    "totalXp": 1500,
+    "totalXp": 0,
     "list": [
       {
         "name": "Revenant Horror",
         "bossName": "Zombie",
-        "level": 3,
+        "level": 0,
         "maxLevel": 9,
-        "xp": 1200,
-        "nextLevelXp": 5000
+        "xp": 0,
+        "nextLevelXp": 5
       },
       {
         "name": "Tarantula Broodfather",
         "bossName": "Spider",
-        "level": 2,
+        "level": 0,
         "maxLevel": 9,
-        "xp": 250,
-        "nextLevelXp": 1000
+        "xp": 0,
+        "nextLevelXp": 5
       },
       {
         "name": "Sven Packmaster",
         "bossName": "Wolf",
-        "level": 1,
+        "level": 0,
         "maxLevel": 9,
-        "xp": 50,
-        "nextLevelXp": 250
+        "xp": 0,
+        "nextLevelXp": 10
       },
       {
         "name": "Voidgloom Seraph",
@@ -196,36 +196,330 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
     ]
   },
   "collections": {
-    "unlockedCount": 28,
+    "unlockedCount": 46,
     "totalCount": 75,
     "items": [
       {
-        "name": "Wheat",
-        "category": "Farming",
-        "amount": 45000,
-        "level": 7,
-        "maxLevel": 9
-      },
-      {
-        "name": "Cobblestone",
+        "name": "LOG",
         "category": "Mining",
-        "amount": 120000,
-        "level": 8,
+        "amount": 42723,
+        "level": 1,
         "maxLevel": 10
       },
       {
-        "name": "Redstone",
+        "name": "SEEDS",
         "category": "Mining",
-        "amount": 195000,
-        "level": 9,
+        "amount": 37527,
+        "level": 1,
         "maxLevel": 10
       },
       {
-        "name": "Oak Wood",
-        "category": "Foraging",
-        "amount": 32000,
-        "level": 6,
-        "maxLevel": 9
+        "name": "WHEAT",
+        "category": "Mining",
+        "amount": 111399,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "CARROT ITEM",
+        "category": "Mining",
+        "amount": 1250,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "COBBLESTONE",
+        "category": "Mining",
+        "amount": 51219,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "POTATO ITEM",
+        "category": "Mining",
+        "amount": 190,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "COAL",
+        "category": "Mining",
+        "amount": 143,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "LOG 2",
+        "category": "Mining",
+        "amount": 217,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "FEATHER",
+        "category": "Mining",
+        "amount": 36,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "LEATHER",
+        "category": "Mining",
+        "amount": 83,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "MELON",
+        "category": "Mining",
+        "amount": 106,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "PORK",
+        "category": "Mining",
+        "amount": 31,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "PUMPKIN",
+        "category": "Mining",
+        "amount": 22,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "RAW CHICKEN",
+        "category": "Mining",
+        "amount": 33,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "ROTTEN FLESH",
+        "category": "Mining",
+        "amount": 659,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "SULPHUR",
+        "category": "Mining",
+        "amount": 58,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "GOLD INGOT",
+        "category": "Mining",
+        "amount": 40288,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "IRON INGOT",
+        "category": "Mining",
+        "amount": 499,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "NETHER STALK",
+        "category": "Mining",
+        "amount": 609,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "INK SACK 4",
+        "category": "Mining",
+        "amount": 259334,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "CACTUS",
+        "category": "Mining",
+        "amount": 15,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "INK SACK 3",
+        "category": "Mining",
+        "amount": 33,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "SAND",
+        "category": "Mining",
+        "amount": 517,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "SUGAR CANE",
+        "category": "Mining",
+        "amount": 11,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "REDSTONE",
+        "category": "Mining",
+        "amount": 7938,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "SPIDER EYE",
+        "category": "Mining",
+        "amount": 40,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "STRING",
+        "category": "Mining",
+        "amount": 106,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "BONE",
+        "category": "Mining",
+        "amount": 349,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "MUSHROOM COLLECTION",
+        "category": "Mining",
+        "amount": 21,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "SLIME BALL",
+        "category": "Mining",
+        "amount": 97014,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "GLOWSTONE DUST",
+        "category": "Mining",
+        "amount": 2,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "ENDER PEARL",
+        "category": "Mining",
+        "amount": 6907,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "INK SACK",
+        "category": "Mining",
+        "amount": 3,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "WATER LILY",
+        "category": "Mining",
+        "amount": 2,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "LOG 1",
+        "category": "Mining",
+        "amount": 115,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "LOG 2 1",
+        "category": "Mining",
+        "amount": 122,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "LOG 3",
+        "category": "Mining",
+        "amount": 783,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "LOG 2",
+        "category": "Mining",
+        "amount": 291,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "GRAVEL",
+        "category": "Mining",
+        "amount": 41,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "EMERALD",
+        "category": "Mining",
+        "amount": 25,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "DIAMOND",
+        "category": "Mining",
+        "amount": 144447,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "OBSIDIAN",
+        "category": "Mining",
+        "amount": 687,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "ICE",
+        "category": "Mining",
+        "amount": 32128,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "ENDER STONE",
+        "category": "Mining",
+        "amount": 833,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "SULPHUR ORE",
+        "category": "Mining",
+        "amount": 1777,
+        "level": 1,
+        "maxLevel": 10
+      },
+      {
+        "name": "MITHRIL ORE",
+        "category": "Mining",
+        "amount": 4514,
+        "level": 1,
+        "maxLevel": 10
       }
     ]
   },
@@ -332,7 +626,29 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
       null,
       null,
       null,
-      null
+      {
+        "slot": 3,
+        "id": "ENDER_GAUNTLET",
+        "internalId": "ENDER_GAUNTLET",
+        "name": "Ender Gauntlet",
+        "count": 1,
+        "rarity": "EPIC",
+        "recombobulated": false,
+        "lore": [
+          "§7Health: §c+15",
+          "§7Defense: §a+10",
+          "",
+          "§7All stats on this piece of equipment",
+          "§7are multiplied by §52x §7while on the End",
+          "§7Island!",
+          "",
+          "§7§eRight-click to equip!",
+          "",
+          "§7§8This item can be reforged!",
+          "§8§l* §8Co-op Soulbound §8§l*",
+          "§5§lEPIC GLOVES"
+        ]
+      }
     ],
     "weapon": {
       "slot": 0,
@@ -460,6 +776,85 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
           "§7mining §fTitanium Ore§7.",
           "",
           "§a§lUNCOMMON PICKAXE"
+        ]
+      },
+      {
+        "slot": 5,
+        "id": "JUNGLE_AXE",
+        "internalId": "JUNGLE_AXE",
+        "name": "Spruce Axe",
+        "count": 1,
+        "rarity": "UNCOMMON",
+        "enchantments": {
+          "efficiency": 5
+        },
+        "recombobulated": false,
+        "lore": [
+          "§7Sweep: §2+4",
+          "§7Gemstones: §8[§8§8]",
+          "",
+          "§9Efficiency V",
+          "§7Increases how quickly your tool",
+          "§7breaks blocks.",
+          "",
+          "§6Ability: Throwing Axe  §e§lRIGHT CLICK",
+          "§7While on §2Foraging Islands§7, throw your Axe at a",
+          "§7tree! It will sweep §c50% §7of the logs it normally",
+          "§7would!§7",
+          "§8Cooldown: §a1s",
+          "",
+          "§6Ability: Park Enjoyer ",
+          "§7Gain §6+50 Foraging Fortune §7while in §aThe Park§7.",
+          "",
+          "§7§8This item can be reforged!",
+          "§a§lUNCOMMON AXE"
+        ]
+      },
+      {
+        "slot": 6,
+        "id": "REFINED_MITHRIL_PICKAXE",
+        "internalId": "REFINED_MITHRIL_PICKAXE",
+        "name": "Refined Mithril Pickaxe",
+        "count": 1,
+        "rarity": "RARE",
+        "enchantments": {
+          "efficiency": 5,
+          "fortune": 3,
+          "smelting_touch": 1,
+          "compact": 6,
+          "telekinesis": 1,
+          "experience": 3
+        },
+        "recombobulated": false,
+        "lore": [
+          "§8Breaking Power 5",
+          "",
+          "§7Damage: §c+50",
+          "§7Mining Speed: §6+350",
+          "§7Mining Fortune: §6+40",
+          "§7Mining Wisdom: §3+6",
+          "",
+          "§9Compact VI §840,544",
+          "§7Gain §3+6☯ Mining Wisdom §7and a §a0.36%",
+          "§a§7chance to drop an enchanted item.",
+          "§850k blocks to tier up!",
+          "§9Efficiency V",
+          "§7Increases how quickly your tool",
+          "§7breaks blocks.",
+          "§9Experience III",
+          "§7Grants a §a37.5% §7chance for mobs and",
+          "§7ores to drop double experience.",
+          "§9Fortune III",
+          "§7Grants §6+30 Mining Fortune§7, which",
+          "§7increases your chance for multiple",
+          "§7drops.",
+          "§9Smelting Touch I",
+          "§7Automatically smelts broken blocks",
+          "§7into their smelted form.",
+          "",
+          "§7§8This item can be reforged!",
+          "§7§4❣ §cRequires §5Heart of the Mountain Tier 3§c.",
+          "§9§lRARE PICKAXE"
         ]
       },
       {
@@ -1547,7 +1942,24 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         ]
       }
     ],
-    "personalVault": [],
+    "personalVault": [
+      {
+        "slot": 0,
+        "id": "GREEN_CANDY",
+        "internalId": "GREEN_CANDY",
+        "name": "Green Candy",
+        "count": 2,
+        "rarity": "UNCOMMON",
+        "recombobulated": false,
+        "lore": [
+          "§7Candy can be used to trade with the",
+          "§7Fear Mongerer during the §6Spooky",
+          "§6Festival§7!",
+          "",
+          "§a§lUNCOMMON"
+        ]
+      }
+    ],
     "wardrobe": [],
     "storage": []
   },
@@ -1748,36 +2160,18 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
     "missingCount": 92
   },
   "pets": {
-    "list": [
-      {
-        "type": "SILVERFISH",
-        "name": "Silverfish",
-        "rarity": "RARE",
-        "level": 42,
-        "exp": 160000,
-        "active": true,
-        "candyUsed": 0
-      }
-    ],
-    "activePet": {
-      "type": "SILVERFISH",
-      "name": "Silverfish",
-      "rarity": "RARE",
-      "level": 42,
-      "exp": 160000,
-      "active": true,
-      "candyUsed": 0
-    },
-    "petScore": 1
+    "list": [],
+    "activePet": null,
+    "petScore": 0
   },
   "dungeons": {
-    "catacombsLevel": 3,
-    "catacombsXp": 850,
+    "catacombsLevel": 0,
+    "catacombsXp": 0,
     "classes": {
       "berserk": {
         "name": "Berserk",
-        "level": 3,
-        "xp": 850
+        "level": 0,
+        "xp": 0
       },
       "archer": {
         "name": "Archer",
@@ -1786,8 +2180,8 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
       },
       "mage": {
         "name": "Mage",
-        "level": 1,
-        "xp": 120
+        "level": 0,
+        "xp": 0
       },
       "tank": {
         "name": "Tank",
@@ -1800,63 +2194,63 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "xp": 0
       }
     },
-    "secretsFound": 14
+    "secretsFound": 0
   },
   "mining": {
     "hotmTier": 3,
-    "mithrilPowder": 4500,
-    "gemstonePowder": 1200,
+    "mithrilPowder": 3358,
+    "gemstonePowder": 0,
     "glacitePowder": 0
   },
   "garden": {
-    "gardenLevel": 5,
-    "cropsComposted": 24,
-    "visitorsAccepted": 35,
-    "unlockedPlots": 4
+    "gardenLevel": 0,
+    "cropsComposted": 0,
+    "visitorsAccepted": 0,
+    "unlockedPlots": 0
   },
   "minions": {
-    "slots": 12,
-    "unlockedMinions": 48
+    "slots": 10,
+    "unlockedMinions": 35
   },
   "networth": {
-    "total": 55219854,
-    "liquid": 39939854,
+    "total": 15450030,
+    "liquid": 21121,
     "breakdown": [
       {
         "category": "Purse",
         "name": "Purse",
-        "value": 39939854,
-        "percentage": 72.3
-      },
-      {
-        "category": "Accessories",
-        "name": "Accessories",
-        "value": 3310000,
-        "percentage": 6
+        "value": 21121,
+        "percentage": 0
       },
       {
         "category": "Ender Chest",
         "name": "Ender Chest",
         "value": 11500000,
-        "percentage": 20.8
+        "percentage": 74.4
+      },
+      {
+        "category": "Accessories",
+        "name": "Accessories",
+        "value": 3310000,
+        "percentage": 21.4
       },
       {
         "category": "Weapons",
         "name": "Weapons",
-        "value": 250000,
-        "percentage": 0.5
+        "value": 350000,
+        "percentage": 2.3
+      },
+      {
+        "category": "Equipment",
+        "name": "Equipment",
+        "value": 200000,
+        "percentage": 1.3
       },
       {
         "category": "Armor",
         "name": "Armor",
-        "value": 55000,
-        "percentage": 0.1
-      },
-      {
-        "category": "Pets",
-        "name": "Pets",
-        "value": 160000,
-        "percentage": 0.3
+        "value": 90000,
+        "percentage": 0.6
       }
     ],
     "mostValuableItems": [
@@ -1901,53 +2295,38 @@ export const DEFAULT_VERIFIED_PROFILE: FullSkyBlockProfile = {
         "lore": []
       },
       {
-        "id": "ZOMBIE_RING",
-        "name": "Zombie Ring",
-        "count": 1,
-        "rarity": "UNCOMMON",
-        "price": 320000,
-        "lore": []
-      },
-      {
         "id": "ASPECT_OF_THE_END",
         "name": "Aspect of the End",
         "count": 1,
         "rarity": "RARE",
         "price": 250000,
         "lore": []
+      },
+      {
+        "id": "ENDER_GAUNTLET",
+        "name": "Ender Gauntlet",
+        "count": 1,
+        "rarity": "EPIC",
+        "price": 200000,
+        "lore": []
       }
     ],
     "historicalSnapshots": [
       {
-        "timestamp": "2026-10-01T00:00:00Z",
-        "networth": 28500000,
-        "purse": 21000000
-      },
-      {
-        "timestamp": "2026-10-15T00:00:00Z",
-        "networth": 35200000,
-        "purse": 29000000
-      },
-      {
         "timestamp": "2026-11-01T00:00:00Z",
-        "networth": 42100000,
-        "purse": 35000000
+        "networth": 12500000,
+        "purse": 100
       },
       {
-        "timestamp": "2026-11-07T21:06:00Z",
-        "networth": 46900000,
-        "purse": 39900000
-      },
-      {
-        "timestamp": "2026-11-08T03:40:00Z",
-        "networth": 55219854,
-        "purse": 39939854
+        "timestamp": "2026-11-08T04:00:00Z",
+        "networth": 15450030,
+        "purse": 30
       }
     ]
   },
   "transparency": {
     "dataSource": "HYPIXEL_API_LIVE",
-    "lastUpdated": "2026-11-07T22:17:55.894Z",
+    "lastUpdated": "2026-11-07T22:31:43.686Z",
     "cached": true,
     "provenance": "Hypixel Public API v2 (Official)"
   }

@@ -211,10 +211,10 @@ export async function parseHypixelProfile(
   ];
 
   const equipList: (DecodedItem | null)[] = [
-    rawEquip[0] || null, // Necklace
-    rawEquip[1] || null, // Cloak
-    rawEquip[2] || null, // Belt
-    rawEquip[3] || null, // Gloves
+    rawEquip.find(i => i.slot === 0) || null, // Necklace
+    rawEquip.find(i => i.slot === 1) || null, // Cloak
+    rawEquip.find(i => i.slot === 2) || null, // Belt
+    rawEquip.find(i => i.slot === 3) || null, // Gloves
   ];
 
   // Primary held weapon from main inventory slot 0 or any weapon
