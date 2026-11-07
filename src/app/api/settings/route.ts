@@ -14,8 +14,8 @@ export async function GET() {
     // ignore
   }
 
-  const isConfigured = Boolean((envKey && envKey.trim() !== '') || hasDbKey);
-  const source = envKey && envKey.trim() !== '' ? 'ENVIRONMENT_VARIABLE' : hasDbKey ? 'LOCAL_DATABASE' : 'NOT_SET';
+  const isConfigured = true;
+  const source = envKey && envKey.trim() !== '' ? 'ENVIRONMENT_VARIABLE' : hasDbKey ? 'LOCAL_DATABASE' : 'SERVER_DEFAULT';
 
   return NextResponse.json({
     success: true,

@@ -72,7 +72,7 @@ export function Header({
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    router.push(`/p/${encodeURIComponent(searchQuery.trim())}/Strawberry`);
+    router.push(`/p/${encodeURIComponent(searchQuery.trim())}`);
   };
 
   const rankBg = profile.identity.rank.includes('MVP')

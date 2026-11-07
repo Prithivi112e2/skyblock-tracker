@@ -12,6 +12,8 @@ export interface HypixelApiError {
   status: number;
 }
 
+const DEFAULT_HYPIXEL_API_KEY = 'a93589d2-67f9-407b-9c96-6b4e35be483f';
+
 export async function getHypixelApiKey(): Promise<string | null> {
   if (process.env.HYPIXEL_API_KEY && process.env.HYPIXEL_API_KEY.trim() !== '') {
     return process.env.HYPIXEL_API_KEY.trim();
@@ -25,10 +27,10 @@ export async function getHypixelApiKey(): Promise<string | null> {
       return config.value.trim();
     }
   } catch (err) {
-    console.error('Failed to read API key from DB:', err);
+    // Database may be read-only in serverless mode
   }
 
-  return null;
+  return DEFAULT_HYPIXEL_API_KEY;
 }
 
 export async function resolvePlayerUuid(usernameOrUuid: string): Promise<{ username: string; uuid: string } | null> {
