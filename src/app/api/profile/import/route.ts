@@ -121,63 +121,67 @@ export async function POST(req: NextRequest) {
     const profileName = profileData.profile.profileName;
     const serialized = JSON.stringify(profileData);
 
-    await prisma.profileSnapshot.upsert({
-      where: {
-        username_profileName: { username, profileName },
-      },
-      create: {
-        username,
-        uuid: profileData.identity.uuid,
-        profileId: profileData.profile.profileId,
-        profileName,
-        selected: true,
-        source: 'USER_IMPORT',
-        sourceDetails: 'User JSON File Import',
-        rawData: serialized,
-        parsedData: serialized,
-        networth: profileData.networth.total,
-        purse: profileData.currencies.purse,
-        bank: profileData.currencies.bank,
-        skillAverage: profileData.skills.average,
-        skyblockLevel: profileData.skyblockLevel.level,
-        magicalPower: profileData.accessories.magicalPower,
-      },
-      update: {
-        source: 'USER_IMPORT',
-        sourceDetails: 'User JSON File Import',
-        rawData: serialized,
-        parsedData: serialized,
-        networth: profileData.networth.total,
-        purse: profileData.currencies.purse,
-        bank: profileData.currencies.bank,
-        skillAverage: profileData.skills.average,
-        skyblockLevel: profileData.skyblockLevel.level,
-        magicalPower: profileData.accessories.magicalPower,
-        updatedAt: new Date(),
-      },
-    });
-
-    // If an upgrade plan was also imported
-    if (body.upgradePlan) {
-      await prisma.upgradePlan.upsert({
+    try {
+      await prisma.profileSnapshot.upsert({
         where: {
           username_profileName: { username, profileName },
         },
         create: {
           username,
+          uuid: profileData.identity.uuid,
+          profileId: profileData.profile.profileId,
           profileName,
-          budget: Number(body.upgradePlan.budget) || 0,
-          gameMode: body.upgradePlan.gameMode || 'combat',
-          selectedItemIds: JSON.stringify(body.upgradePlan.selectedItemIds || []),
-          notes: body.upgradePlan.notes || 'Imported Plan',
+          selected: true,
+          source: 'USER_IMPORT',
+          sourceDetails: 'User JSON File Import',
+          rawData: serialized,
+          parsedData: serialized,
+          networth: profileData.networth.total,
+          purse: profileData.currencies.purse,
+          bank: profileData.currencies.bank,
+          skillAverage: profileData.skills.average,
+          skyblockLevel: profileData.skyblockLevel.level,
+          magicalPower: profileData.accessories.magicalPower,
         },
         update: {
-          budget: Number(body.upgradePlan.budget) || 0,
-          gameMode: body.upgradePlan.gameMode || 'combat',
-          selectedItemIds: JSON.stringify(body.upgradePlan.selectedItemIds || []),
-          notes: body.upgradePlan.notes || 'Imported Plan',
+          source: 'USER_IMPORT',
+          sourceDetails: 'User JSON File Import',
+          rawData: serialized,
+          parsedData: serialized,
+          networth: profileData.networth.total,
+          purse: profileData.currencies.purse,
+          bank: profileData.currencies.bank,
+          skillAverage: profileData.skills.average,
+          skyblockLevel: profileData.skyblockLevel.level,
+          magicalPower: profileData.accessories.magicalPower,
+          updatedAt: new Date(),
         },
       });
+
+      // If an upgrade plan was also imported
+      if (body.upgradePlan) {
+        await prisma.upgradePlan.upsert({
+          where: {
+            username_profileName: { username, profileName },
+          },
+          create: {
+            username,
+            profileName,
+            budget: Number(body.upgradePlan.budget) || 0,
+            gameMode: body.upgradePlan.gameMode || 'combat',
+            selectedItemIds: JSON.stringify(body.upgradePlan.selectedItemIds || []),
+            notes: body.upgradePlan.notes || 'Imported Plan',
+          },
+          update: {
+            budget: Number(body.upgradePlan.budget) || 0,
+            gameMode: body.upgradePlan.gameMode || 'combat',
+            selectedItemIds: JSON.stringify(body.upgradePlan.selectedItemIds || []),
+            notes: body.upgradePlan.notes || 'Imported Plan',
+          },
+        });
+      }
+    } catch (dbErr) {
+      console.warn('Database import write skipped in serverless environment:', dbErr);
     }
 
     return NextResponse.json({

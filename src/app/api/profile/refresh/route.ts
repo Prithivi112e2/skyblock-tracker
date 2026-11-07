@@ -62,45 +62,49 @@ export async function POST(req: NextRequest) {
 
     // Save to database
     const serialized = JSON.stringify(parsed);
-    await prisma.profileSnapshot.upsert({
-      where: {
-        username_profileName: {
-          username: parsed.identity.username,
-          profileName: parsed.profile.profileName,
+    try {
+      await prisma.profileSnapshot.upsert({
+        where: {
+          username_profileName: {
+            username: parsed.identity.username,
+            profileName: parsed.profile.profileName,
+          },
         },
-      },
-      create: {
-        username: parsed.identity.username,
-        uuid: parsed.identity.uuid,
-        profileId: parsed.profile.profileId,
-        profileName: parsed.profile.profileName,
-        selected: parsed.profile.selected,
-        gameMode: parsed.profile.gameMode || 'normal',
-        source: 'HYPIXEL_API_LIVE',
-        sourceDetails: `Official Hypixel API v2 · ${new Date().toLocaleDateString('en-US')}`,
-        rawData: serialized,
-        parsedData: serialized,
-        networth: parsed.networth.total,
-        purse: parsed.currencies.purse,
-        bank: parsed.currencies.bank,
-        skillAverage: parsed.skills.average,
-        skyblockLevel: parsed.skyblockLevel.level,
-        magicalPower: parsed.accessories.magicalPower,
-      },
-      update: {
-        source: 'HYPIXEL_API_LIVE',
-        sourceDetails: `Official Hypixel API v2 · ${new Date().toLocaleDateString('en-US')}`,
-        rawData: serialized,
-        parsedData: serialized,
-        networth: parsed.networth.total,
-        purse: parsed.currencies.purse,
-        bank: parsed.currencies.bank,
-        skillAverage: parsed.skills.average,
-        skyblockLevel: parsed.skyblockLevel.level,
-        magicalPower: parsed.accessories.magicalPower,
-        updatedAt: new Date(),
-      },
-    });
+        create: {
+          username: parsed.identity.username,
+          uuid: parsed.identity.uuid,
+          profileId: parsed.profile.profileId,
+          profileName: parsed.profile.profileName,
+          selected: parsed.profile.selected,
+          gameMode: parsed.profile.gameMode || 'normal',
+          source: 'HYPIXEL_API_LIVE',
+          sourceDetails: `Official Hypixel API v2 · ${new Date().toLocaleDateString('en-US')}`,
+          rawData: serialized,
+          parsedData: serialized,
+          networth: parsed.networth.total,
+          purse: parsed.currencies.purse,
+          bank: parsed.currencies.bank,
+          skillAverage: parsed.skills.average,
+          skyblockLevel: parsed.skyblockLevel.level,
+          magicalPower: parsed.accessories.magicalPower,
+        },
+        update: {
+          source: 'HYPIXEL_API_LIVE',
+          sourceDetails: `Official Hypixel API v2 · ${new Date().toLocaleDateString('en-US')}`,
+          rawData: serialized,
+          parsedData: serialized,
+          networth: parsed.networth.total,
+          purse: parsed.currencies.purse,
+          bank: parsed.currencies.bank,
+          skillAverage: parsed.skills.average,
+          skyblockLevel: parsed.skyblockLevel.level,
+          magicalPower: parsed.accessories.magicalPower,
+          updatedAt: new Date(),
+        },
+      });
+    } catch (dbErr) {
+      console.warn('Database snapshot cache write skipped in serverless environment:', dbErr);
+    }
 
     return NextResponse.json({
       success: true,

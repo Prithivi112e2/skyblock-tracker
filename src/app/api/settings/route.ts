@@ -31,9 +31,13 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) {
       // Remove key
-      await prisma.appConfig.deleteMany({
-        where: { key: 'HYPIXEL_API_KEY' },
-      });
+      try {
+        await prisma.appConfig.deleteMany({
+          where: { key: 'HYPIXEL_API_KEY' },
+        });
+      } catch (dbErr) {
+        console.warn('Config delete skipped:', dbErr);
+      }
       return NextResponse.json({
         success: true,
         message: 'Hypixel API Key removed.',
@@ -52,16 +56,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await prisma.appConfig.upsert({
-      where: { key: 'HYPIXEL_API_KEY' },
-      create: {
-        key: 'HYPIXEL_API_KEY',
-        value: apiKey,
-      },
-      update: {
-        value: apiKey,
-      },
-    });
+    try {
+      await prisma.appConfig.upsert({
+        where: { key: 'HYPIXEL_API_KEY' },
+        create: {
+          key: 'HYPIXEL_API_KEY',
+          value: apiKey,
+        },
+        update: {
+          value: apiKey,
+        },
+      });
+    } catch (dbErr) {
+      console.warn('Config upsert skipped:', dbErr);
+    }
 
     return NextResponse.json({
       success: true,

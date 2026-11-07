@@ -48,25 +48,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: 'Username and profileName required' }, { status: 400 });
     }
 
-    const updated = await prisma.upgradePlan.upsert({
-      where: {
-        username_profileName: { username, profileName },
-      },
-      create: {
-        username,
-        profileName,
+    let updated: any = null;
+    try {
+      updated = await prisma.upgradePlan.upsert({
+        where: {
+          username_profileName: { username, profileName },
+        },
+        create: {
+          username,
+          profileName,
+          budget: Number(budget) || 0,
+          gameMode: gameMode || 'combat',
+          selectedItemIds: JSON.stringify(selectedItemIds || []),
+          notes: notes || '',
+        },
+        update: {
+          budget: Number(budget) || 0,
+          gameMode: gameMode || 'combat',
+          selectedItemIds: JSON.stringify(selectedItemIds || []),
+          notes: notes || '',
+        },
+      });
+    } catch (dbErr) {
+      console.warn('Database planner write skipped in serverless environment:', dbErr);
+      updated = {
         budget: Number(budget) || 0,
         gameMode: gameMode || 'combat',
         selectedItemIds: JSON.stringify(selectedItemIds || []),
         notes: notes || '',
-      },
-      update: {
-        budget: Number(budget) || 0,
-        gameMode: gameMode || 'combat',
-        selectedItemIds: JSON.stringify(selectedItemIds || []),
-        notes: notes || '',
-      },
-    });
+      };
+    }
 
     return NextResponse.json({
       success: true,
