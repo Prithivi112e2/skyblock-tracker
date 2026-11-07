@@ -212,8 +212,9 @@ export async function parseHypixelProfile(
   };
 
   // Currencies
-  const purse = member.currencies?.coin_purse || member.coin_purse || 0;
-  const bank = rawProfile.banking?.balance || 0;
+  const purse = member.currencies?.coin_purse ?? member.coin_purse ?? 0;
+  const bank = rawProfile.banking?.balance ?? 0;
+  const sacks = member.inventory?.sacks_counts || undefined;
 
   // Inventories & Equipment NBT Decoding
   const invData = member.inventory?.inv_contents?.data || member.inv_contents?.data;
@@ -403,6 +404,7 @@ export async function parseHypixelProfile(
       personalVault,
       wardrobe,
       storage: [],
+      sacks,
     },
     accessories: {
       magicalPower: totalMagicalPower,

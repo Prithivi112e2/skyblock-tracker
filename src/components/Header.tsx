@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FullSkyBlockProfile } from '@/lib/types';
@@ -12,7 +12,8 @@ import {
   Search, 
   Key,
   ShieldCheck,
-  AlertTriangle 
+  AlertTriangle,
+  Clock
 } from 'lucide-react';
 import { ShareModal } from './ShareModal';
 import { ImportExportModal } from './ImportExportModal';
@@ -32,6 +33,51 @@ export function Header({
   const [showShareModal, setShowShareModal] = useState(false);
   const [showImportExportModal, setShowImportExportModal] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ text: string; error?: boolean } | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [secondsAgo, setSecondsAgo] = useState(0);
+
+  // Live timer for seconds ago
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lastUpdated]);
+
+  // Automatic 10-second background updates (Requirement 4)
+  useEffect(() => {
+    let isMounted = true;
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/profile/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: profile.identity.username,
+            profileName: profile.profile.profileName,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data && isMounted) {
+            setLastUpdated(new Date());
+            setSecondsAgo(0);
+            if (onProfileUpdated) {
+              onProfileUpdated(data.data);
+            }
+            router.refresh();
+          }
+        }
+      } catch (e) {
+        // Background polling jitter silently handled
+      }
+    }, 10000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [profile.identity.username, profile.profile.profileName, onProfileUpdated, router]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -55,6 +101,8 @@ export function Header({
           error: true,
         });
       } else {
+        setLastUpdated(new Date());
+        setSecondsAgo(0);
         setStatusMessage({ text: 'Profile successfully refreshed from Hypixel API v2!' });
         if (onProfileUpdated && data.data) {
           onProfileUpdated(data.data);
@@ -138,6 +186,15 @@ export function Header({
                 className="w-36 sm:w-48 pl-8 pr-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-xs text-neutral-200 focus:outline-none focus:border-amber-500 transition-colors"
               />
             </form>
+
+            {/* Live 10s auto-refresh ticker badge (Requirement 4) */}
+            <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-neutral-900/90 border border-neutral-800 text-[11px] text-neutral-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-neutral-400">Live 10s Sync:</span>
+              <span className="text-amber-300 font-mono font-semibold">
+                {secondsAgo === 0 ? 'just now' : `${secondsAgo}s ago`}
+              </span>
+            </div>
 
             <button
               onClick={handleRefresh}

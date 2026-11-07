@@ -212,6 +212,7 @@ export interface FullSkyBlockProfile {
     personalVault: DecodedItem[];
     wardrobe: DecodedItem[];
     storage: DecodedItem[];
+    sacks?: Record<string, number>;
   };
   accessories: {
     magicalPower: number;

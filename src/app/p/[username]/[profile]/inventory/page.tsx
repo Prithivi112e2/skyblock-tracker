@@ -90,6 +90,28 @@ export default async function InventoryPage({
           </div>
         </div>
       )}
+
+      {/* Sacks Storage */}
+      {profile.inventories.sacks && Object.keys(profile.inventories.sacks).length > 0 && (
+        <div className="p-5 rounded-xl bg-neutral-900/70 border border-neutral-800 space-y-4">
+          <h3 className="font-bold text-sm text-white flex items-center gap-2">
+            <Archive className="w-4 h-4 text-amber-400" />
+            Sacks Storage Contents
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+            {Object.entries(profile.inventories.sacks).map(([key, count]) => (
+              <div key={key} className="p-3 rounded-lg bg-neutral-950 border border-neutral-800/80 flex flex-col justify-between">
+                <span className="text-xs font-semibold text-neutral-300 truncate" title={key.replace(/_/g, ' ')}>
+                  {key.replace(/_/g, ' ').replace(/:/g, ' ')}
+                </span>
+                <span className="text-sm font-mono font-bold text-amber-400 mt-1">
+                  {Number(count).toLocaleString()}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
