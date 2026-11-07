@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getProfileData } from '@/lib/profile-service';
 
 export async function GET(
   req: NextRequest,
@@ -8,31 +8,24 @@ export async function GET(
   const { username, profile } = params;
 
   try {
-    const snapshot = await prisma.profileSnapshot.findFirst({
-      where: {
-        username: { equals: username },
-        profileName: { equals: profile },
-      },
-    });
+    const data = await getProfileData(username, profile);
 
-    if (!snapshot) {
+    if (!data) {
       return NextResponse.json(
         { success: false, error: 'PROFILE_NOT_FOUND', message: 'Profile not found' },
         { status: 404 }
       );
     }
 
-    const parsed = JSON.parse(snapshot.parsedData);
-
     return NextResponse.json(
       {
         success: true,
         schemaVersion: '2.0.0',
-        player: parsed.identity,
-        profile: parsed.profile,
-        equipment: parsed.equipment,
-        inventories: parsed.inventories,
-        transparency: parsed.transparency,
+        player: data.identity,
+        profile: data.profile,
+        equipment: data.equipment,
+        inventories: data.inventories,
+        transparency: data.transparency,
       },
       {
         headers: {
