@@ -180,6 +180,7 @@ export interface FullSkyBlockProfile {
     purse: number;
     bank: number;
     totalLiquid: number;
+    bankAvailable?: boolean;
   };
   skyblockLevel: {
     level: number;

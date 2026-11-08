@@ -77,15 +77,30 @@ export default async function OverviewPage({
         </div>
 
         <div className="p-3.5 rounded-xl bg-neutral-900/80 border border-neutral-800 space-y-1">
-          <div className="flex items-center gap-1.5 text-xs text-neutral-400">
-            <Landmark className="w-3.5 h-3.5 text-blue-400" />
-            <span>Bank Balance</span>
+          <div className="flex items-center justify-between text-xs text-neutral-400">
+            <div className="flex items-center gap-1.5">
+              <Landmark className="w-3.5 h-3.5 text-blue-400" />
+              <span>Bank Balance</span>
+            </div>
+            {profile.currencies.bankAvailable === false && (
+              <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded" title="Hypixel API did not return bank data for this profile. Enable Banking API in Island Settings in-game.">
+                API Disabled
+              </span>
+            )}
           </div>
           <div className="text-base sm:text-lg font-bold text-white font-mono">
-            {formatCoins(profile.currencies.bank)}
+            {profile.currencies.bankAvailable === false ? (
+              <span className="text-neutral-400 font-sans text-sm">Not Public</span>
+            ) : (
+              formatCoins(profile.currencies.bank)
+            )}
           </div>
           <div className="text-[11px] text-neutral-500">
-            Co-op vault
+            {profile.currencies.bankAvailable === false ? (
+              <span className="text-neutral-500">Enable in Island Settings</span>
+            ) : (
+              'Bank / Co-op vault'
+            )}
           </div>
         </div>
 

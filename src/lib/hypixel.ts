@@ -214,6 +214,7 @@ export async function parseHypixelProfile(
   // Currencies
   const purse = member.currencies?.coin_purse ?? member.coin_purse ?? 0;
   const bank = rawProfile.banking?.balance ?? 0;
+  const bankAvailable = rawProfile.banking?.balance !== undefined;
   const sacks = member.inventory?.sacks_counts || undefined;
 
   // Inventories & Equipment NBT Decoding
@@ -346,6 +347,7 @@ export async function parseHypixelProfile(
       purse,
       bank,
       totalLiquid: purse + bank,
+      bankAvailable,
     },
     skyblockLevel: {
       level: sbLevel,

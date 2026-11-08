@@ -39,7 +39,8 @@ async function main() {
   "currencies": {
     "purse": 21121,
     "bank": 0,
-    "totalLiquid": 21121
+    "totalLiquid": 21121,
+    "bankAvailable": false
   },
   "skyblockLevel": {
     "level": 19,

@@ -53,7 +53,9 @@ export default async function NetworthPage({
           <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">
             {formatCoins(nw.liquid)}
           </div>
-          <p className="text-[11px] text-neutral-500">Purse ({formatCoins(profile.currencies.purse)}) + Bank ({formatCoins(profile.currencies.bank)})</p>
+          <p className="text-[11px] text-neutral-500">
+            Purse ({formatCoins(profile.currencies.purse)}) + Bank ({profile.currencies.bankAvailable === false ? 'API Disabled' : formatCoins(profile.currencies.bank)})
+          </p>
         </div>
 
         <div className="p-5 rounded-xl bg-neutral-900/70 border border-neutral-800 space-y-1">
