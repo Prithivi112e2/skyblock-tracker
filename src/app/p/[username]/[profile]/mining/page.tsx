@@ -4,6 +4,9 @@ import { getProfileData } from '@/lib/profile-service';
 import { DataSourceBadge } from '@/components/DataSourceBadge';
 import { Pickaxe, Gem, Sparkles } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function MiningPage({
   params,
 }: {

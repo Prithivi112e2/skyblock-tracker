@@ -5,6 +5,9 @@ import { DataSourceBadge } from '@/components/DataSourceBadge';
 import { UpgradePlannerClient } from '@/components/UpgradePlannerClient';
 import { Calculator } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function PlannerPage({
   params,
 }: {

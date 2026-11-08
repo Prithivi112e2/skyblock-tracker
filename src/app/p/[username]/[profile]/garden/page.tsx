@@ -4,6 +4,9 @@ import { getProfileData } from '@/lib/profile-service';
 import { DataSourceBadge } from '@/components/DataSourceBadge';
 import { Sprout, Users, Layers, Award } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function GardenPage({
   params,
 }: {

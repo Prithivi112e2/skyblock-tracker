@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FullSkyBlockProfile } from '@/lib/types';
+import { useProfile } from '@/context/ProfileContext';
 import { 
   Menu, 
   RefreshCw, 
@@ -19,102 +18,18 @@ import { ShareModal } from './ShareModal';
 import { ImportExportModal } from './ImportExportModal';
 
 export function Header({
-  profile,
   onOpenSidebar,
-  onProfileUpdated,
 }: {
-  profile: FullSkyBlockProfile;
   onOpenSidebar: () => void;
-  onProfileUpdated?: (updated: FullSkyBlockProfile) => void;
 }) {
   const router = useRouter();
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { profile, setProfile, isRefreshing, secondsAgo, syncStatus, statusMessage, refreshNow } = useProfile();
   const [searchQuery, setSearchQuery] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
   const [showImportExportModal, setShowImportExportModal] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<{ text: string; error?: boolean } | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-  const [secondsAgo, setSecondsAgo] = useState(0);
-
-  // Live timer for seconds ago
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [lastUpdated]);
-
-  // Automatic 10-second background updates (Requirement 4)
-  useEffect(() => {
-    let isMounted = true;
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch('/api/profile/refresh', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: profile.identity.username,
-            profileName: profile.profile.profileName,
-          }),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && data.data && isMounted) {
-            setLastUpdated(new Date());
-            setSecondsAgo(0);
-            if (onProfileUpdated) {
-              onProfileUpdated(data.data);
-            }
-            router.refresh();
-          }
-        }
-      } catch (e) {
-        // Background polling jitter silently handled
-      }
-    }, 10000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [profile.identity.username, profile.profile.profileName, onProfileUpdated, router]);
 
   const handleRefresh = async () => {
-    setIsRefreshing(true);
-    setStatusMessage(null);
-
-    try {
-      const res = await fetch('/api/profile/refresh', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: profile.identity.username,
-          profileName: profile.profile.profileName,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        setStatusMessage({
-          text: data.message || 'Failed to refresh profile from Hypixel API.',
-          error: true,
-        });
-      } else {
-        setLastUpdated(new Date());
-        setSecondsAgo(0);
-        setStatusMessage({ text: 'Profile successfully refreshed from Hypixel API v2!' });
-        if (onProfileUpdated && data.data) {
-          onProfileUpdated(data.data);
-        }
-        router.refresh();
-      }
-    } catch (err: any) {
-      setStatusMessage({ text: err.message || 'Network error refreshing profile', error: true });
-    } finally {
-      setIsRefreshing(false);
-      setTimeout(() => setStatusMessage(null), 6000);
-    }
+    await refreshNow(true);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -187,20 +102,39 @@ export function Header({
               />
             </form>
 
-            {/* Live 10s auto-refresh ticker badge (Requirement 4) */}
+            {/* Live 10s auto-refresh ticker badge */}
             <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-neutral-900/90 border border-neutral-800 text-[11px] text-neutral-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-neutral-400">Live 10s Sync:</span>
-              <span className="text-amber-300 font-mono font-semibold">
-                {secondsAgo === 0 ? 'just now' : `${secondsAgo}s ago`}
-              </span>
+              {syncStatus === 'updating' ? (
+                <>
+                  <RefreshCw className="w-2.5 h-2.5 text-amber-400 animate-spin" />
+                  <span className="text-amber-300 font-medium">Updating...</span>
+                </>
+              ) : syncStatus === 'error' ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  <span className="text-rose-400">Sync Error</span>
+                </>
+              ) : syncStatus === 'stale' ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  <span className="text-amber-400">Cached</span>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-neutral-400">Live 10s Sync:</span>
+                  <span className="text-amber-300 font-mono font-semibold">
+                    {secondsAgo === 0 ? 'just now' : `${secondsAgo}s ago`}
+                  </span>
+                </>
+              )}
             </div>
 
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-700/80 text-xs font-medium text-neutral-200 transition-colors disabled:opacity-50"
-              title="Refresh profile from official Hypixel API"
+              title="Force fresh refresh from official Hypixel API"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-amber-400' : 'text-neutral-400'}`} />
               <span className="hidden sm:inline">Refresh</span>
@@ -229,24 +163,18 @@ export function Header({
           <div
             className={`mt-2.5 px-3 py-2 rounded-lg text-xs flex items-center justify-between border ${
               statusMessage.error
-                ? 'bg-red-950/40 border-red-800/60 text-red-300'
-                : 'bg-emerald-950/40 border-emerald-800/60 text-emerald-300'
+                ? 'bg-rose-950/60 border-rose-800 text-rose-200'
+                : 'bg-emerald-950/60 border-emerald-800 text-emerald-200'
             }`}
           >
             <div className="flex items-center gap-2">
               {statusMessage.error ? (
-                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
               ) : (
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
               )}
               <span>{statusMessage.text}</span>
             </div>
-            <button
-              onClick={() => setStatusMessage(null)}
-              className="text-xs opacity-70 hover:opacity-100 ml-2 font-bold"
-            >
-              ×
-            </button>
           </div>
         )}
       </header>
@@ -264,10 +192,7 @@ export function Header({
         <ImportExportModal
           profile={profile}
           onClose={() => setShowImportExportModal(false)}
-          onImportSuccess={(newProf) => {
-            if (onProfileUpdated) onProfileUpdated(newProf);
-            router.refresh();
-          }}
+          onImportSuccess={(newProf) => setProfile(newProf)}
         />
       )}
     </>

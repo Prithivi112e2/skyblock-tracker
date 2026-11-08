@@ -1,6 +1,9 @@
 import { redirect } from 'next/navigation';
 import { resolvePlayerUuid, fetchHypixelProfiles, getHypixelApiKey } from '@/lib/hypixel';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function PlayerPage({
   params,
 }: {

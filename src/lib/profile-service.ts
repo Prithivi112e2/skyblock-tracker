@@ -15,6 +15,19 @@ let rateLimitUntil = 0;
 
 const CACHE_TTL_MS = 10000; // 10-second freshness window to avoid rate limits
 
+export function updateMemoryCache(profile: FullSkyBlockProfile) {
+  const cacheKey = `${profile.identity.username.toLowerCase()}:${profile.profile.profileName.toLowerCase()}`;
+  memoryCache.set(cacheKey, { profile, timestamp: Date.now() });
+}
+
+export function clearMemoryCache(username?: string, profileName?: string) {
+  if (username && profileName) {
+    memoryCache.delete(`${username.toLowerCase()}:${profileName.toLowerCase()}`);
+  } else {
+    memoryCache.clear();
+  }
+}
+
 export async function getProfileData(
   username: string,
   profileName: string,
@@ -37,8 +50,8 @@ export async function getProfileData(
     }
   }
 
-  // 2. Request deduplication: if a request for this profile is already in flight, share it
-  if (inFlightRequests.has(cacheKey)) {
+  // 2. Request deduplication: if a request for this profile is already in flight, share it (unless forceRefresh)
+  if (!options?.forceRefresh && inFlightRequests.has(cacheKey)) {
     try {
       const sharedResult = await inFlightRequests.get(cacheKey)!;
       if (sharedResult) return sharedResult;
@@ -81,8 +94,8 @@ export async function getProfileData(
             // Store in memory cache
             memoryCache.set(cacheKey, { profile: parsed, timestamp: Date.now() });
 
-            // Persist to database asynchronously
-            persistToDatabase(parsed).catch((err) =>
+            // Persist to database
+            await persistToDatabase(parsed).catch((err) =>
               console.warn('Background database persistence failed:', err)
             );
 

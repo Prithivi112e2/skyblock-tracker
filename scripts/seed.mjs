@@ -2392,50 +2392,40 @@ async function main() {
 };
   const parsedJson = JSON.stringify(verifiedProfile);
 
-  await prisma.profileSnapshot.upsert({
+  const existing = await prisma.profileSnapshot.findUnique({
     where: {
       username_profileName: {
         username: 'Prithivi102',
         profileName: 'Strawberry',
       },
     },
-    create: {
-      username: 'Prithivi102',
-      uuid: '22da8f997e2b4edfa8f0ca75f479f289',
-      profileId: '8796e462-28be-47c3-b181-a14d23af337f',
-      profileName: 'Strawberry',
-      selected: true,
-      gameMode: 'normal',
-      source: 'HYPIXEL_API_LIVE',
-      sourceDetails: 'Official Hypixel API v2',
-      rawData: parsedJson,
-      parsedData: parsedJson,
-      networth: verifiedProfile.networth.total,
-      purse: verifiedProfile.currencies.purse,
-      bank: verifiedProfile.currencies.bank,
-      skillAverage: verifiedProfile.skills.average,
-      skyblockLevel: verifiedProfile.skyblockLevel.level,
-      magicalPower: verifiedProfile.accessories.magicalPower,
-    },
-    update: {
-      uuid: '22da8f997e2b4edfa8f0ca75f479f289',
-      profileId: '8796e462-28be-47c3-b181-a14d23af337f',
-      profileName: 'Strawberry',
-      selected: true,
-      gameMode: 'normal',
-      source: 'HYPIXEL_API_LIVE',
-      sourceDetails: 'Official Hypixel API v2',
-      rawData: parsedJson,
-      parsedData: parsedJson,
-      networth: verifiedProfile.networth.total,
-      purse: verifiedProfile.currencies.purse,
-      bank: verifiedProfile.currencies.bank,
-      skillAverage: verifiedProfile.skills.average,
-      skyblockLevel: verifiedProfile.skyblockLevel.level,
-      magicalPower: verifiedProfile.accessories.magicalPower,
-      updatedAt: new Date(),
-    },
   });
+
+  if (!existing) {
+    console.log('Seeding initial profile snapshot into database...');
+    await prisma.profileSnapshot.create({
+      data: {
+        username: 'Prithivi102',
+        uuid: '22da8f997e2b4edfa8f0ca75f479f289',
+        profileId: '8796e462-28be-47c3-b181-a14d23af337f',
+        profileName: 'Strawberry',
+        selected: true,
+        gameMode: 'normal',
+        source: 'HYPIXEL_API_LIVE',
+        sourceDetails: 'Official Hypixel API v2',
+        rawData: parsedJson,
+        parsedData: parsedJson,
+        networth: verifiedProfile.networth.total,
+        purse: verifiedProfile.currencies.purse,
+        bank: verifiedProfile.currencies.bank,
+        skillAverage: verifiedProfile.skills.average,
+        skyblockLevel: verifiedProfile.skyblockLevel.level,
+        magicalPower: verifiedProfile.accessories.magicalPower,
+      },
+    });
+  } else {
+    console.log('Profile snapshot already exists in database; preserving live data without overwriting.');
+  }
 
   await prisma.appConfig.upsert({
     where: { key: 'HYPIXEL_API_KEY' },

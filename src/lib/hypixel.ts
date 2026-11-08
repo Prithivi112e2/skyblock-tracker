@@ -82,6 +82,8 @@ export async function resolvePlayerUuid(usernameOrUuid: string): Promise<{ usern
 export async function fetchHypixelPlayer(uuid: string, apiKey: string) {
   const res = await fetch(`https://api.hypixel.net/v2/player?uuid=${uuid}`, {
     headers: { 'API-Key': apiKey },
+    cache: 'no-store',
+    next: { revalidate: 0 },
   });
 
   if (!res.ok) {
@@ -100,6 +102,8 @@ export async function fetchHypixelPlayer(uuid: string, apiKey: string) {
 export async function fetchHypixelProfiles(uuid: string, apiKey: string) {
   const res = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${uuid}`, {
     headers: { 'API-Key': apiKey },
+    cache: 'no-store',
+    next: { revalidate: 0 },
   });
 
   if (!res.ok) {

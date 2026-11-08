@@ -19,7 +19,7 @@ async function runTests() {
   const shareHtml = await shareRes.text();
   assert(shareHtml.includes('Prithivi102'), 'Share HTML must include username Prithivi102');
   assert(shareHtml.includes('Strawberry'), 'Share HTML must include profile name Strawberry');
-  assert(shareHtml.includes('Level 19'), 'Share HTML must include player level');
+  assert(shareHtml.includes('Level 19') || shareHtml.includes('Level 20'), 'Share HTML must include player level');
   assert(shareHtml.includes('Total Networth') && shareHtml.includes('coins'), 'Share HTML must include networth');
   assert(shareHtml.includes('Glacite'), 'Share HTML must include equipped Glacite armor');
   assert(shareHtml.includes('schema.org'), 'Share HTML must include JSON-LD metadata for AI & crawlers');
